@@ -1,48 +1,50 @@
-arch-luks-suspend
-==================
+ubuntu-luks-suspend
+===================
 
-A script for [Arch Linux][] to lock the encrypted root volume on suspend.
+A script for [Ubuntu Linux][] to lock the encrypted root volume on suspend.
 
-When using [dm-crypt with LUKS][] to set up full system encryption, the
-encryption key is kept in memory when suspending the system. This drawback
-defeats the purpose of encryption if you carry around your suspended laptop
-a lot. One can use the `cryptsetup luksSuspend` command to freeze all I/O and
-flush the key from memory, but special care must be taken when applying it to
-the root device.
+When using [Ubuntu Full Disk Encryption][] (that is based on dm-crypt with LUKS) to set up full system encryption, the encryption key is kept in memory when suspending the system. This drawback defeats the purpose of encryption if you carry around your suspended laptop a lot. One can use the `cryptsetup luksSuspend` command to freeze all I/O and flush the key from memory, but special care must be taken when applying it to the root device.
 
-The `arch-linux-suspend` script replaces the default suspend mechanism of
-systemd. It changes root to initramfs in order to perform the `luksSuspend`,
-actual suspend, and `luksResume` operations. It relies on the `shutdown`
-initcpio hook to provide access to the initramfs.
+The `ubuntu-linux-suspend` script replaces the default suspend mechanism of systemd. It changes root to initramfs in order to perform the `luksSuspend`, actual suspend, and `luksResume` operations. It relies on the `shutdown` initcpio hook to provide access to the initramfs.
 
-[Arch Linux]: https://www.archlinux.org/
-[dm-crypt with LUKS]: https://wiki.archlinux.org/index.php/Dm-crypt_with_LUKS
+[Ubuntu Full Disk Encryption]: https://www.eff.org/deeplinks/2012/11/privacy-ubuntu-1210-full-disk-encryption
+[Ubuntu Linux]: https://www.ubuntu.com/
 
+For more information on dm-crypt with LUKS check out this [guide for Arch Linux][dm-crypt with LUKS on Arch].
+
+[dm-crypt with LUKS on Arch]: https://wiki.archlinux.org/index.php/Dm-crypt_with_LUKS
 
 Installation
--------------
+------------
 
-1. Install this AUR package: https://aur.archlinux.org/packages/arch-luks-suspend-git/  
-   Alternatively, run `make install` as root.
+1. Run `make install` as root.
 2. Edit `/etc/mkinitcpio.conf` and make sure the following hooks are enabled:
    `udev`, `encrypt`, `shutdown`, `suspend`.
 3. Rebuild the initramfs: `mkinitcpio -p linux`.
 4. Reboot.
 
 
-Author and license
--------------------
+Files
+-----
 
-Copyright 2013 Vianney le Clément de Saint-Marcq <vleclement@gmail.com>
+initramfs-hook: adds initramfs-suspend (/suspend) to newly built initramfs images
+systemd-suspend.service: 
+ubuntu-luks-suspend:
+initramfs-suspend:
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; version 3 of the License.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Author, base work and license
+-----------------------------
 
-You should have received a copy of the GNU General Public License
-along with This program.  If not, see <http://www.gnu.org/licenses/>.
+Copyright 2013 [Jonas Malaco Filho][] <jonas@jonasmalaco.com>
+Heavily based on [work for Arch Linux][arch-luks-suspend] by [Vianney le Clément de Saint-Marcq][]
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 3 of the License.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with This program.  If not, see <http://www.gnu.org/licenses/>.
+
+[arch-luks-suspend]:https://github.com/vianney/arch-luks-suspend
+[Jonas Malaco Filho]:https://github.com/jonasmalacofilho
+[Vianney le Clément de Saint-Marcq]:https://github.com/vianney

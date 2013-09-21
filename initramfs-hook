@@ -1,0 +1,3 @@
+#!/bin/bash
+
+install -Dm755 "/usr/lib/ubuntu-luks-suspend/initramfs-suspend" "${DESTDIR}/suspend"

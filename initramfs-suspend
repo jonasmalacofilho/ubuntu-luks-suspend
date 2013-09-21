@@ -10,7 +10,7 @@ cryptname=$(sed -n 's/.*cryptdevice=[^: ]*:\([^: ]*\).*$/\1/p' /proc/cmdline)
 [ -z "${cryptname}" ] || cryptsetup luksSuspend "${cryptname}"
 
 # Suspend the system
-echo mem > /sys/power/state
+pm-suspend
 
 # Resume root device
 [ -z "${cryptname}" ] ||
