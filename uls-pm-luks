@@ -86,7 +86,7 @@ copy_exec() {
 }
 
 # alternate do_suspend with optinal cryptsetup luks* calls
-if [ -z DISABLE_LUKS_SUSPEND ]; then
+if [ -z "${DISABLE_LUKS_SUSPEND}" ]; then
 	do_luks_suspend()
 	{
 		# prepare the chroot jail
