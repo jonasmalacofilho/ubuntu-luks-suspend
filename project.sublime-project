@@ -2,7 +2,13 @@
 	"folders":
 	[
 		{
-			"path": "."
+			"path": "/home/jonas/Development/ubuntu/luks-suspend"
+		},
+		{
+			"path": "/usr/lib/pm-utils"
+		},
+		{
+			"path": "/etc/pm"
 		}
 	]
 }

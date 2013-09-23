@@ -1,0 +1,122 @@
+#!/bin/sh
+# Complementary LUKS support for suspend/hibernate
+#
+# Copyright 2013 Jonas Malaco Filho
+#
+# Based on work from:
+#    Bill Nottingham <notting@redhat.com>
+#    Peter Jones <pjones@redhat.com>
+#    David Zeuthen <davidz@redhat.com>
+#    Richard Hughes <richard@hughsie.com>
+#    (5)
+#    (6)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of version 2 of the GNU General Public License as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+. "/usr/lib/pm-utils/pm-functions"
+
+CHROOT_DIR=/run/luks-suspend
+BIND_PATHS="/sys /proc /dev /run /usr/lib/pm-utils"
+EXECS="/bin/bash /sbin/cryptsetup"
+
+
+# $1 = file to copy to chroot
+# $2 (optional) Name for the file on the chroot
+# Location of the chroot dir is assumed to be $CHROOT_DIR
+# We never overwrite the target if it exists.
+copy_exec() {
+	local src target x nonoptlib
+	local libname dirname
+
+	src="${1}"
+	target="${2:-$1}"
+
+	[ -f "${src}" ] || return 1
+
+	if [ -d "${CHROOT_DIR}/${target}" ]; then
+		# check if already copied
+		[ -e "${CHROOT_DIR}/$target/${src##*/}" ] && return 0
+	else
+		[ -e "${CHROOT_DIR}/$target" ] && return 0
+		#FIXME: inst_dir
+		mkdir -p "${CHROOT_DIR}/${target%/*}"
+	fi
+
+	[ "${verbose}" = "y" ] && echo "Adding binary ${src}"
+	cp -pL "${src}" "${CHROOT_DIR}/${target}"
+
+	# Copy the dependant libraries
+	for x in $(ldd ${src} 2>/dev/null | sed -e '
+		/\//!d;
+		/linux-gate/d;
+		/=>/ {s/.*=>[[:blank:]]*\([^[:blank:]]*\).*/\1/};
+		s/[[:blank:]]*\([^[:blank:]]*\) (.*)/\1/' 2>/dev/null); do
+
+		# Try to use non-optimised libraries where possible.
+		# We assume that all HWCAP libraries will be in tls,
+		# sse2, vfp or neon.
+		nonoptlib=$(echo "${x}" | sed -e 's#/lib/\(tls\|i686\|sse2\|neon\|vfp\).*/\(lib.*\)#/lib/\2#')
+
+		if [ -e "${nonoptlib}" ]; then
+			x="${nonoptlib}"
+		fi
+
+		libname=$(basename "${x}")
+		dirname=$(dirname "${x}")
+
+		# FIXME inst_lib
+		mkdir -p "${CHROOT_DIR}/${dirname}"
+		if [ ! -e "${CHROOT_DIR}/${dirname}/${libname}" ]; then
+			cp -pL "${x}" "${CHROOT_DIR}/${dirname}"
+			[ "${verbose}" = "y" ] && echo "Adding library ${x}" || true
+		fi
+	done
+}
+
+# alternate do_suspend with optinal cryptsetup luks* calls
+if [ -z DISABLE_LUKS_SUSPEND ]; then
+	do_luks_suspend()
+	{
+		# prepare the chroot jail
+		# restore
+		for p in ${BIND_PATHS}; do
+			! mountpoint -q "${CHROOT_DIR}${p}" || umount "${CHROOT_DIR}${p}"
+		done
+		# prepare
+		for p in ${BIND_PATHS}; do
+			mount -o bind ${p} "${CHROOT_DIR}${p}"
+		done
+		# copy needed executables
+		for e in ${EXECS}; do
+			copy_exec ${e}
+		done
+		# copy suspend script
+		cp /usr/lib/pm-utils/pm-luks-suspend ${CHROOT_DIR}/suspend
+
+		# suspend
+		openvt -ws chroot /run/${CHROOT_DIR}/ /bin/bash suspend
+	}
+else
+	do_luks_suspend()
+	{
+		do_suspend
+	}
+fi
+
+# alternate do_hibernate with optinal cryptsetup luks* calls
+du_luks_hibernate()
+{
+	do_hibernate
+}

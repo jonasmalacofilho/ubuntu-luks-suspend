@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. "/usr/lib/pm-utils/pm-functions"
+
+/sbin/cryptsetup luksSuspend /dev/sda5
+do_suspend()
+/sbin/cryptsetup luksResume /dev/sda5
