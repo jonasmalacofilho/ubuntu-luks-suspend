@@ -1,7 +1,7 @@
 PM_UTILS_DIR := /usr/lib/pm-utils/
 
 install:
-	install -Dm755 uls-pm-luks "$(PM_UTILS_DIR)pm-luks-suspend"
+	install -Dm755 uls-pm-luks-suspend "$(PM_UTILS_DIR)pm-luks-suspend"
 	install -Dm755 uls-pm-luks "$(PM_UTILS_DIR)pm-luks"
 	install -Dm755 uls-pm-action "$(PM_UTILS_DIR)bin/pm-action"
 	install -Dm755 uls-pm-functions "$(PM_UTILS_DIR)pm-functions"

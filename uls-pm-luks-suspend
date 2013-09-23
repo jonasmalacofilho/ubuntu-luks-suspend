@@ -1,7 +1,17 @@
 #!/bin/sh
 
-. "/usr/lib/pm-utils/pm-functions"
+#. "/usr/lib/pm-utils/pm-functions"
 
-/sbin/cryptsetup luksSuspend /dev/sda5
-do_suspend()
-/sbin/cryptsetup luksResume /dev/sda5
+date >> log
+tty >> log
+
+echo "luks: actually suspending" >> log
+#do_suspend
+echo -n "standby" > /sys/power/state
+
+echo "luks: suspending" >> log
+/sbin/cryptsetup luksSuspend /dev/mapper/sda5_crypt
+
+echo "luks: resuming" >> log
+/sbin/cryptsetup luksResume /dev/mapper/sda5_crypt
+

@@ -27,9 +27,9 @@
 
 . "/usr/lib/pm-utils/pm-functions"
 
-CHROOT_DIR=/run/luks-suspend
+CHROOT_DIR=/boot/luks-suspend
 BIND_PATHS="/sys /proc /dev /run /usr/lib/pm-utils"
-EXECS="/bin/bash /sbin/cryptsetup"
+EXECS="/bin/bash /bin/grep /bin/echo /bin/date /usr/bin/tty /sbin/cryptsetup"
 
 
 # $1 = file to copy to chroot
@@ -96,7 +96,8 @@ if [ -z "${DISABLE_LUKS_SUSPEND}" ]; then
 		done
 		# prepare
 		for p in ${BIND_PATHS}; do
-			mount -o bind ${p} "${CHROOT_DIR}${p}"
+			mkdir -p "${CHROOT_DIR}${p}"
+			mount --bind ${p} "${CHROOT_DIR}${p}"
 		done
 		# copy needed executables
 		for e in ${EXECS}; do
@@ -105,8 +106,16 @@ if [ -z "${DISABLE_LUKS_SUSPEND}" ]; then
 		# copy suspend script
 		cp /usr/lib/pm-utils/pm-luks-suspend ${CHROOT_DIR}/suspend
 
-		# suspend
-		openvt -ws chroot /run/${CHROOT_DIR}/ /bin/bash suspend
+		log $( ls "${CHROOT_DIR}" )
+
+		# stop udev & sync fs
+		service udev stop
+		sync
+
+		openvt -ws -- chroot ${CHROOT_DIR} /bin/bash suspend
+
+		# restart udev
+		service udev start
 	}
 else
 	do_luks_suspend()
