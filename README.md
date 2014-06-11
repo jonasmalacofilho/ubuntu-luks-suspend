@@ -14,23 +14,23 @@ For more information on dm-crypt with LUKS check out this [guide for Arch Linux]
 
 [dm-crypt with LUKS on Arch]: https://wiki.archlinux.org/index.php/Dm-crypt_with_LUKS
 
+
 Installation
 ------------
 
-1. Run `make install` as root.
-2. Edit `/etc/mkinitcpio.conf` and make sure the following hooks are enabled:
-   `udev`, `encrypt`, `shutdown`, `suspend`.
-3. Rebuild the initramfs: `mkinitcpio -p linux`.
-4. Reboot.
+Don't use this directly!
+
+Based on Ubuntu 14.04 'pm-action' and 'pm-functions' files.
 
 
 Files
 -----
 
-initramfs-hook: adds initramfs-suspend (/suspend) to newly built initramfs images
-systemd-suspend.service: 
-ubuntu-luks-suspend:
-initramfs-suspend:
+ * 'uls-pm-functions' and 'pm-functions' are (for now) identical
+ * 'uls-pm-action' and 'pm-action' differ only by the sourcing of complementary functions in 'uls-pm-luks' and by using these functions for suspend-to-memory and suspend-to-disk
+ * 'uls-pm-luks' includes LUKS-aware `do_luks_suspend` and `do_luks_hibernate` functions
+ * 'uls-pm-luks-suspend' is the script that runs in the temporary initramfs
+
 
 
 Author, base work and license
