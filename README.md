@@ -28,7 +28,7 @@ _Updated in November/2019:_
 
 This collection of scripts has not seen any development since 2014, and was never functional.  One reason for that could be [a missing patch](https://lwn.net/Articles/582648/) to the kernel (see: #2), but there could be others.
 
-Regardless, by now it is most certainly outdated.  For Ubuntu 14.04, check [this Gist by Andrei Pozolotin](https://gist.github.com/Andrei-Pozolotin/2ab50d4f160c2ed8bd1a).  For other distributions running systemd consult the [ArchLinux Wiki](https://wiki.archlinux.org/index.php/Dm-crypt/Swap_encryption#With_suspend-to-disk_support) or the [original approach taken by Vianney](https://github.com/vianney/arch-luks-suspend).
+Regardless, by now it is most certainly outdated.  For Ubuntu 14.04, check [this Gist by Andrei Pozolotin](https://gist.github.com/Andrei-Pozolotin/2ab50d4f160c2ed8bd1a).  For other distributions running systemd consult the [original approach taken by Vianney](https://github.com/vianney/arch-luks-suspend) or [Sung Pae's adaptation of it](https://github.com/guns/go-luks-suspend).
 
 
 Installation
