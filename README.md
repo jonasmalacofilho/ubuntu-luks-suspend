@@ -1,7 +1,7 @@
 ubuntu-luks-suspend
 ===================
 
-_A non-functional attempt to make [Ubuntu Linux][] 14.04 lock the encrypted root volume uppon suspending (to RAM)_
+_A non-functional attempt to make [Ubuntu 14.04][] lock the encrypted root volume when suspending to RAM_
 
 
 About
@@ -12,7 +12,7 @@ When using [Ubuntu Full Disk Encryption][] (that is based on dm-crypt with LUKS)
 This was an attempt to change the default suspend mechanism. The basic idea is to change to a chroot outside of the encrypted root fs and then lock it (with `cryptsetup luksSuspend`).
 
 [Ubuntu Full Disk Encryption]: https://www.eff.org/deeplinks/2012/11/privacy-ubuntu-1210-full-disk-encryption
-[Ubuntu Linux]: https://www.ubuntu.com/
+[Ubuntu 14.04]: https://www.ubuntu.com/
 
 For more information on dm-crypt with LUKS check out this [guide for Arch Linux][dm-crypt with LUKS on Arch].
 
