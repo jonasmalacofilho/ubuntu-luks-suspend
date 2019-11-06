@@ -1,7 +1,7 @@
 ubuntu-luks-suspend
 ===================
 
-_An attempt to make [Ubuntu Linux][] lock the encrypted root volume uppon suspending (to RAM)_
+_A non-functional attempt to make [Ubuntu Linux][] 14.04 lock the encrypted root volume uppon suspending (to RAM)_
 
 
 About
@@ -9,7 +9,7 @@ About
 
 When using [Ubuntu Full Disk Encryption][] (that is based on dm-crypt with LUKS) to set up full system encryption, the encryption key is kept in memory when suspending the system. This drawback defeats the purpose of encryption if you carry around your suspended laptop a lot. One can use the `cryptsetup luksSuspend` command to freeze all I/O and flush the key from memory, but special care must be taken when applying it to the root device.
 
-So, this is an attempt to change the default suspend mechanism. The basic idea is to change to a chroot outside of the encrypted root fs and then lock it (with `cryptsetup luksSuspend`).
+This was an attempt to change the default suspend mechanism. The basic idea is to change to a chroot outside of the encrypted root fs and then lock it (with `cryptsetup luksSuspend`).
 
 [Ubuntu Full Disk Encryption]: https://www.eff.org/deeplinks/2012/11/privacy-ubuntu-1210-full-disk-encryption
 [Ubuntu Linux]: https://www.ubuntu.com/
@@ -24,11 +24,17 @@ Progress
 
 So far the approuch was to change `pm-suspend`. However, there still appears to be some kernel modules loaded that require access to the root fs when trying to suspend (with `echo mem > /sys/power/state`).
 
+_Updated in November/2019:_
+
+This collection of scripts has not seen any development since 2014, and was never functional.  One reason for that could be [a missing patch](https://lwn.net/Articles/582648/) to the kernel (see: #2), but there could be others.
+
+Regardless, by now it is most certainly outdated.  For Ubuntu 14.04, check [this Gist by Andrei Pozolotin](https://gist.github.com/Andrei-Pozolotin/2ab50d4f160c2ed8bd1a).  For other distributions running systemd consult the [ArchLinux Wiki](https://wiki.archlinux.org/index.php/Dm-crypt/Swap_encryption#With_suspend-to-disk_support) or the [original approach taken by Vianney](https://github.com/vianney/arch-luks-suspend).
+
 
 Installation
 ------------
 
-Don't use this directly!
+_Don't use this directly!_
 
 Based on Ubuntu 14.04 'pm-action' and 'pm-functions' files.
 
